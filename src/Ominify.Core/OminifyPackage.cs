@@ -134,12 +134,25 @@ namespace Ominify
             return new PackageContentItem(sb.ToString(), topLastModified);
         }
 
-        static string GetFileSystemPath(string path)
+		static string NormalizeContentPath(string path)
+		{
+			return path
+				.Replace('/', Path.DirectorySeparatorChar)
+				.Replace('\\', Path.DirectorySeparatorChar)
+				.TrimStart(Path.DirectorySeparatorChar);
+		}
+		static string NormalizeBasePath(string path)
+		{
+			return path
+				.Replace('/', Path.DirectorySeparatorChar)
+				.Replace('\\', Path.DirectorySeparatorChar)
+				.TrimEnd(Path.DirectorySeparatorChar);
+		}
+		static string GetFileSystemPath(string path)
         {
-            var normalizedPath = path.TrimStart('/').Replace('/', '\\');
-            var fileSystemPath = Path.Combine(rootFileSystemPath, normalizedPath);
-
-            return fileSystemPath;
+			return Path.GetFullPath(Path.Combine(
+				NormalizeBasePath(rootFileSystemPath),
+				NormalizeContentPath(path)));
         }
 
         public class PackageContentItem
